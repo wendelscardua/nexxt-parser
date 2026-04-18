@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'nexxt-parser'
+
+puts "NEXXT::Parser #{NEXXT::Parser::VERSION}"
+puts "Type 'exit' to exit"
+
+require 'irb'
+IRB.start

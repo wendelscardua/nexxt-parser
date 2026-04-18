@@ -1,0 +1,12 @@
+.bundle/
+*.gem
+*.rbc
+*.swp
+.yardoc
+doc/
+log/
+tmp/
+coverage/
+.DS_Store
+.ruby-version
+spec/examples.txt

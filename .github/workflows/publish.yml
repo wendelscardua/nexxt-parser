@@ -1,0 +1,31 @@
+name: Publish Gem
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  push:
+    name: Push gem to RubyGems
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: ruby
+
+      - name: Build gem
+        run: gem build nexxt-parser.gemspec
+
+      - name: Release gem
+        uses: rubygems/release-gem@v1
