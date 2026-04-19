@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'zlib'
-require_relative 'map_file'
+require_relative 'map'
 
 module NEXXT
   module Parser
@@ -67,7 +67,7 @@ module NEXXT
 
       def render_tile(matrix, tile_row, tile_col)
         tile_index = @map.tiles[tile_row][tile_col]
-        attr = MapFile.extract_attribute(@map.attributes, @map.width, tile_row / 2, tile_col / 2)
+        attr = Map.extract_attribute(@map.attributes, @map.width, tile_row / 2, tile_col / 2)
         chr_offset = (@chr_bank * CHR_BANK_SIZE) + (tile_index * BYTES_PER_TILE)
         pal_offset = (@palette_bank * PALETTE_BANK_SIZE) + (attr * 4)
         (0...TILE_SIZE).each do |y|

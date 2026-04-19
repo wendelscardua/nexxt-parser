@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'metasprite'
-require_relative 'map_file'
+require_relative 'map'
 
 module NEXXT
   module Parser
@@ -54,7 +54,7 @@ module NEXXT
 
         width = flat_table['VarNameW'].to_i
         height = flat_table['VarNameH'].to_i
-        MapFile.new(tiles + attributes, width: width, height: height)
+        Map.new(tiles + attributes, width: width, height: height)
       end
 
       def self.parse_table(flat_table)

@@ -9,6 +9,6 @@ module NEXXT
 end
 
 require_relative 'nexxt/parser/metasprite'
-require_relative 'nexxt/parser/map_file'
+require_relative 'nexxt/parser/map'
 require_relative 'nexxt/parser/session'
 require_relative 'nexxt/parser/png_exporter'

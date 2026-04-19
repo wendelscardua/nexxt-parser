@@ -46,16 +46,16 @@ RSpec.describe NEXXT::Parser::Session do
   end
 
   describe '#map' do
-    it 'returns a MapFile sized from VarNameW/VarNameH' do
+    it 'returns a Map sized from VarNameW/VarNameH' do
       session = described_class.read(fixture_path('session_with_map.nss'))
       map = session.map
-      expect(map).to be_a(NEXXT::Parser::MapFile)
+      expect(map).to be_a(NEXXT::Parser::Map)
       expect([map.width, map.height]).to eq([16, 16])
       expect(map.tiles[0][0]).to eq(0xeb)
       expect(map.attributes.first).to eq(0x55)
     end
 
-    it 'returns a MapFile for a 32x32 nametable' do
+    it 'returns a Map for a 32x32 nametable' do
       session = described_class.read(fixture_path('session_with_metasprites.nss'))
       map = session.map
       expect([map.width, map.height]).to eq([32, 32])

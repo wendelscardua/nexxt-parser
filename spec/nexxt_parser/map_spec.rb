@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe NEXXT::Parser::MapFile do
+RSpec.describe NEXXT::Parser::Map do
   describe '.read' do
     it 'requires a binary file path' do
       expect { described_class.read('nonexistent.map') }.to raise_error(Errno::ENOENT)

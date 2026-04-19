@@ -69,7 +69,7 @@ The exporter uses a built-in 2C02 NES RGB palette; pass a 64-entry array of
 ### Parse a standalone map file
 
 ```ruby
-map = NEXXT::Parser::MapFile.read('path/to/file.map')
+map = NEXXT::Parser::Map.read('path/to/file.map')
 
 map.width   # => Integer
 map.height  # => Integer
