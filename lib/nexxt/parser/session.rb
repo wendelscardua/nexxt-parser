@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'metasprite'
+require_relative 'map_file'
 
 module NEXXT
   module Parser
@@ -31,6 +32,29 @@ module NEXXT
 
       def self.read(file)
         new(File.read(file))
+      end
+
+      def map
+        @map ||= Session.build_map(@flat_table)
+      end
+
+      def palette
+        @palette ||= Session.decode_hex(@flat_table['Palette']) || []
+      end
+
+      def export_png(path, **)
+        require_relative 'png_exporter'
+        PngExporter.export(self, path, **)
+      end
+
+      def self.build_map(flat_table)
+        tiles = decode_hex(flat_table['NameTable'])
+        attributes = decode_hex(flat_table['AttrTable']) || []
+        return nil if tiles.nil? || tiles.empty?
+
+        width = flat_table['VarNameW'].to_i
+        height = flat_table['VarNameH'].to_i
+        MapFile.new(tiles + attributes, width: width, height: height)
       end
 
       def self.parse_table(flat_table)

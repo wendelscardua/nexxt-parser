@@ -10,9 +10,13 @@ module NEXXT
                   :attributes,
                   :metatiles
 
-      def initialize(raw_bytes)
+      def initialize(raw_bytes, width: nil, height: nil)
         @raw_bytes = raw_bytes.dup
-        @width, @height = MapFile.extract_dimensions(@raw_bytes)
+        @width, @height = if width && height
+                            [width, height]
+                          else
+                            MapFile.extract_dimensions(@raw_bytes)
+                          end
         @tiles = MapFile.organize_in_tiles(@raw_bytes, @width, @height)
         @attributes = @raw_bytes[(@width * @height)..]
 
