@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'strscan'
+
 require_relative 'metasprite'
 require_relative 'map'
 
@@ -82,17 +84,20 @@ module NEXXT
         return if string.nil? || string.empty?
 
         string = string['_root'] if string.is_a?(Hash)
-        values = []
-        until string.empty?
-          match = string.match(/\A(?:\[(?<rle>[0-9a-f]+)\]|(?<literal>[0-9a-f]{2}))(?<rest>.*)/)
-          raise "Invalid string #{string}" unless match
+        return if string.nil? || string.empty?
 
-          if (rle = match['rle'])
-            values += [values[-1] || 0] * (rle.to_i(16) - 1)
-          elsif (literal = match['literal'])
-            values << literal.to_i(16)
+        scanner = StringScanner.new(string)
+        values = []
+        last = 0
+        until scanner.eos?
+          if (hex = scanner.scan(/[0-9a-f]{2}/))
+            last = hex.to_i(16)
+            values << last
+          elsif scanner.scan(/\[([0-9a-f]+)\]/)
+            values.concat(Array.new(scanner[1].to_i(16) - 1, last))
+          else
+            raise "Invalid string #{scanner.rest}"
           end
-          string = match['rest']
         end
         values
       end
