@@ -2,7 +2,7 @@
 
 module NEXXT
   module Parser
-    class MapFile
+    class Map
       attr_reader :raw_bytes,
                   :width,
                   :height,
@@ -10,13 +10,17 @@ module NEXXT
                   :attributes,
                   :metatiles
 
-      def initialize(raw_bytes)
+      def initialize(raw_bytes, width: nil, height: nil)
         @raw_bytes = raw_bytes.dup
-        @width, @height = MapFile.extract_dimensions(@raw_bytes)
-        @tiles = MapFile.organize_in_tiles(@raw_bytes, @width, @height)
+        @width, @height = if width && height
+                            [width, height]
+                          else
+                            Map.extract_dimensions(@raw_bytes)
+                          end
+        @tiles = Map.organize_in_tiles(@raw_bytes, @width, @height)
         @attributes = @raw_bytes[(@width * @height)..]
 
-        @metatiles = MapFile.organize_in_metatiles(@tiles, @attributes, @width, @height)
+        @metatiles = Map.organize_in_metatiles(@tiles, @attributes, @width, @height)
       end
 
       def self.read(file)
@@ -68,10 +72,10 @@ module NEXXT
       def self.organize_in_metatiles(tiles, attributes, width, height)
         Array.new(height / 2) do |meta_row|
           Array.new(width / 2) do |meta_column|
-            meta_tiles = MapFile.extract_metatile_tiles(tiles, meta_row, meta_column)
+            meta_tiles = Map.extract_metatile_tiles(tiles, meta_row, meta_column)
             Metatile.new(
               meta_tiles[0], meta_tiles[1], meta_tiles[2], meta_tiles[3],
-              MapFile.extract_attribute(attributes, width, meta_row, meta_column)
+              Map.extract_attribute(attributes, width, meta_row, meta_column)
             )
           end
         end.flatten

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require 'strscan'
+
 require_relative 'metasprite'
+require_relative 'map'
 
 module NEXXT
   module Parser
@@ -33,6 +36,29 @@ module NEXXT
         new(File.read(file))
       end
 
+      def map
+        @map ||= Session.build_map(@flat_table)
+      end
+
+      def palette
+        @palette ||= Session.decode_hex(@flat_table['Palette']) || []
+      end
+
+      def export_png(path, **)
+        require_relative 'png_exporter'
+        PngExporter.export(self, path, **)
+      end
+
+      def self.build_map(flat_table)
+        tiles = decode_hex(flat_table['NameTable'])
+        attributes = decode_hex(flat_table['AttrTable']) || []
+        return nil if tiles.nil? || tiles.empty?
+
+        width = flat_table['VarNameW'].to_i
+        height = flat_table['VarNameH'].to_i
+        Map.new(tiles + attributes, width: width, height: height)
+      end
+
       def self.parse_table(flat_table)
         table = {}
         flat_table.each do |key, value|
@@ -58,17 +84,20 @@ module NEXXT
         return if string.nil? || string.empty?
 
         string = string['_root'] if string.is_a?(Hash)
-        values = []
-        until string.empty?
-          match = string.match(/\A(?:\[(?<rle>[0-9a-f]+)\]|(?<literal>[0-9a-f]{2}))(?<rest>.*)/)
-          raise "Invalid string #{string}" unless match
+        return if string.nil? || string.empty?
 
-          if (rle = match['rle'])
-            values += [values[-1] || 0] * (rle.to_i(16) - 1)
-          elsif (literal = match['literal'])
-            values << literal.to_i(16)
+        scanner = StringScanner.new(string)
+        values = []
+        last = 0
+        until scanner.eos?
+          if (hex = scanner.scan(/[0-9a-f]{2}/))
+            last = hex.to_i(16)
+            values << last
+          elsif scanner.scan(/\[([0-9a-f]+)\]/)
+            values.concat(Array.new(scanner[1].to_i(16) - 1, last))
+          else
+            raise "Invalid string #{scanner.rest}"
           end
-          string = match['rest']
         end
         values
       end

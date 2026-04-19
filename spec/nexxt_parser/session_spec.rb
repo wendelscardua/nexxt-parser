@@ -45,6 +45,38 @@ RSpec.describe NEXXT::Parser::Session do
     end
   end
 
+  describe '#map' do
+    it 'returns a Map sized from VarNameW/VarNameH' do
+      session = described_class.read(fixture_path('session_with_map.nss'))
+      map = session.map
+      expect(map).to be_a(NEXXT::Parser::Map)
+      expect([map.width, map.height]).to eq([16, 16])
+      expect(map.tiles[0][0]).to eq(0xeb)
+      expect(map.attributes.first).to eq(0x55)
+    end
+
+    it 'returns a Map for a 32x32 nametable' do
+      session = described_class.read(fixture_path('session_with_metasprites.nss'))
+      map = session.map
+      expect([map.width, map.height]).to eq([32, 32])
+      expect(map.tiles.length).to eq(32)
+      expect(map.tiles.first.length).to eq(32)
+    end
+
+    it 'memoizes the result' do
+      session = described_class.read(fixture_path('session_with_map.nss'))
+      expect(session.map).to equal(session.map)
+    end
+  end
+
+  describe '#palette' do
+    it 'decodes the session palette bytes' do
+      session = described_class.read(fixture_path('session_with_map.nss'))
+      expect(session.palette.length).to eq(64)
+      expect(session.palette[0, 4]).to eq([0x0a, 0x3c, 0x28, 0x17])
+    end
+  end
+
   describe '.decode_hex' do
     it 'parses literal hex bytes' do
       result = described_class.decode_hex('010203')

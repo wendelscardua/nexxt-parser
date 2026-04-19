@@ -38,10 +38,38 @@ session.metasprites.each do |metasprite|
 end
 ```
 
-### Parse a map file
+### Access the session map / nametable
 
 ```ruby
-map = NEXXT::Parser::MapFile.read('path/to/file.map')
+session = NEXXT::Parser::Session.read('path/to/file.nss')
+
+map = session.map
+map.width       # => Integer (in tiles)
+map.height      # => Integer
+map.tiles       # => 2D array of tile indices
+map.attributes  # => Raw attribute bytes
+map.metatiles   # => Array of Metatile objects
+
+session.palette # => Array of NES palette bytes (from the Palette entry)
+```
+
+### Export the nametable as a PNG
+
+```ruby
+session = NEXXT::Parser::Session.read('path/to/file.nss')
+session.export_png('out.png')
+
+# Optional overrides: chr_bank (0..3), palette_bank (0..3), custom nes_palette
+session.export_png('out.png', chr_bank: 1, palette_bank: 0)
+```
+
+The exporter uses a built-in 2C02 NES RGB palette; pass a 64-entry array of
+`[r, g, b]` triples as `nes_palette:` to swap in a different one.
+
+### Parse a standalone map file
+
+```ruby
+map = NEXXT::Parser::Map.read('path/to/file.map')
 
 map.width   # => Integer
 map.height  # => Integer
