@@ -1,5 +1,10 @@
 # NEXXT
 
+[![Gem Version](https://badge.fury.io/rb/nexxt-parser.svg)](https://rubygems.org/gems/nexxt-parser)
+[![CI](https://github.com/wendelscardua/nexxt-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/wendelscardua/nexxt-parser/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-rubydoc.info-blue.svg)](https://rubydoc.info/gems/nexxt-parser)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Parser for NEXXT Studio (NES graphics editor) session files.
 
 ## Installation
